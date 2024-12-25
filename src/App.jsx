@@ -15,7 +15,6 @@ function App() {
     // Wait for the DOM to load
     // const p5 = window.p5;
     if (!p5Instance || !p5Ref.current) return;
-    console.log("App useEffect", p5Ref.current);
     !isSetup && sketch?.setup(p5Instance, p5Ref.current);
     setIsSetup(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -31,8 +30,10 @@ function App() {
                 <div id="canvas-wrapper">
                   <div id="container" ref={p5Ref}>
                   <ReactP5Wrapper sketch={(p) => {
-                      console.log("ReactP5Wrapper", p);
-                      !p5Instance && setP5Instance(p);
+                      if(!p5Instance) {
+                        setP5Instance(p);
+                        window.p5 = p;
+                      }
                   }} ></ReactP5Wrapper>
                   </div>
                 </div>

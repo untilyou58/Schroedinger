@@ -227,8 +227,8 @@ export function Schroedinger(settings, p5) {
   /*************************************************************************************************/
 
   this.initializePlotParameters = function () {
-    for (let j = 1; j < p5?.width - 1; j++) {
-      let x = j / (p5?.width - 1);
+    for (let j = 1; j < window?.p5?.width - 1; j++) {
+      let x = j / (window?.p5?.width - 1);
       let inArray = {
         x: this.size * x,
         p: this.size * (0.5 + (x - 0.5) / this.momentumZoom),
@@ -311,7 +311,7 @@ export function Schroedinger(settings, p5) {
     let newRow = this.dataTable.addRow();
     for (let property in this.statistics) {
       newRow.setString(property, this.statistics[property].toExponential(6));
-      console.log(property + ": " + this.statistics[property].toExponential(6));
+      // console.log(property + ": " + this.statistics[property].toExponential(6));
     }
 
     /*
@@ -325,16 +325,16 @@ export function Schroedinger(settings, p5) {
   /*************************************************************************************************/
 
   this.show = function () {
-    p5?.background(30);
+    window?.p5?.background(30);
 
-    let textHeight = p5?.height / 30;
+    let textHeight = window?.p5?.height / 30;
     let topMargin = 1.5 * textHeight;
-    let heightX = 0.7 * p5?.height;
+    let heightX = 0.7 * window?.p5?.height;
     let seperator = heightX + topMargin + 2;
-    let heightP = p5?.height - 2 * topMargin - heightX - 2;
+    let heightP = window?.p5?.height - 2 * topMargin - heightX - 2;
 
     this.drawUnderlay(seperator, heightX - 2 * topMargin, 2 * topMargin);
-    console.log(this.psiX, this.plotX, heightX, topMargin, this.scaleFactor);
+    // console.log(this.psiX, this.plotX, heightX, topMargin, this.scaleFactor);
     this.plotComplexData(
       this.psiX,
       this.plotX,
@@ -346,13 +346,13 @@ export function Schroedinger(settings, p5) {
       this.psiP,
       this.plotP,
       heightP,
-      p5?.height - heightP,
+      window?.p5?.height - heightP,
       1 / this.maxFourierAmp
     );
     this.drawOverlay(seperator, textHeight);
 
     if (this.imageFile !== null) {
-      p5?.saveCanvas(this.imageFile + this.frameCount + ".png");
+      window?.p5?.saveCanvas(this.imageFile + this.frameCount + ".png");
       console.log(
         "-> Frame saved as " + this.imageFile + this.frameCount + ".png"
       );
@@ -366,26 +366,31 @@ export function Schroedinger(settings, p5) {
       let maxPotEnergyWaveVector = Math.sqrt(2 * this.maxPot);
       let maxWaveVector = Math.PI / this.xStep;
       let delta =
-        ((0.5 * p5?.width * maxPotEnergyWaveVector) / maxWaveVector) *
+        ((0.5 * window?.p5?.width * maxPotEnergyWaveVector) / maxWaveVector) *
         this.momentumZoom;
 
       this.underlay.clear();
       this.underlay.stroke(235);
       this.underlay.strokeWeight(3);
-      this.underlay.line(0, seperatorHeight, p5?.width, seperatorHeight);
+      this.underlay.line(
+        0,
+        seperatorHeight,
+        window?.p5?.width,
+        seperatorHeight
+      );
       this.underlay.strokeWeight(1);
       this.underlay.fill(100);
       this.underlay.rect(
-        0.5 * p5?.width - delta,
+        0.5 * window?.p5?.width - delta,
         seperatorHeight,
         2 * delta,
-        p5?.height - seperatorHeight
+        window?.p5?.height - seperatorHeight
       );
       this.underlay.line(
-        0.5 * p5?.width,
+        0.5 * window?.p5?.width,
         seperatorHeight,
-        0.5 * p5?.width,
-        p5?.height
+        0.5 * window?.p5?.width,
+        window?.p5?.height
       );
 
       this.underlay.fill(100);
@@ -395,7 +400,7 @@ export function Schroedinger(settings, p5) {
       this.underlay.vertex(0, plotHeight + topMargin);
       let y = plotHeight + topMargin;
       if (this.maxPot > this.minPot) {
-        for (let j = 1; j < p5?.width - 1; j++) {
+        for (let j = 1; j < window?.p5?.width - 1; j++) {
           y =
             (plotHeight * (this.maxPot - this.plotPot[j])) /
               (this.maxPot - this.minPot) +
@@ -403,12 +408,12 @@ export function Schroedinger(settings, p5) {
           this.underlay.vertex(j, y);
         }
       }
-      this.underlay.vertex(p5?.width - 1, y);
-      this.underlay.vertex(p5?.width - 1, seperatorHeight - 1);
-      this.underlay.endShape(p5?.CLOSE);
+      this.underlay.vertex(window?.p5?.width - 1, y);
+      this.underlay.vertex(window?.p5?.width - 1, seperatorHeight - 1);
+      this.underlay.endShape(window?.p5?.CLOSE);
     }
 
-    p5?.image(this.underlay, 0, 0);
+    window?.p5?.image(this.underlay, 0, 0);
   };
 
   /*************************************************************************************************/
@@ -420,77 +425,77 @@ export function Schroedinger(settings, p5) {
     topMargin,
     scaleFactor
   ) {
-    p5?.strokeWeight(1);
-    p5?.colorMode(p5?.HSB, 255);
+    window?.p5?.strokeWeight(1);
+    window?.p5?.colorMode(window?.p5?.HSB, 255);
 
-    for (let j = 1; j < p5?.width - 1; j++) {
-      let a = new Complex(1 - plotMap[j].w);
-      let b = new Complex(plotMap[j].w);
-      let i = plotMap[j].i;
+    for (let j = 1; j < window?.p5?.width - 1; j++) {
+      let a = new Complex(1 - plotMap[j]?.w);
+      let b = new Complex(plotMap[j]?.w);
+      let i = plotMap[j]?.i;
       let val = new Complex().add(a.mul(data[i]), b.mul(data[i + 1]));
       let y = plotHeight * (1 - val.abs() * scaleFactor) + topMargin;
       let cl = Math.floor((val.arg() / Math.PI + 1) * 128);
 
-      p5?.stroke(cl, 225, 235);
-      p5?.line(j, plotHeight + topMargin, j, y);
+      window?.p5?.stroke(cl, 225, 235);
+      window?.p5?.line(j, plotHeight + topMargin, j, y);
     }
   };
 
   /*************************************************************************************************/
 
   this.drawOverlay = function (seperatorHeight, textHeight) {
-    p5?.noStroke();
-    p5?.fill(235);
-    p5?.textSize(textHeight);
-    p5?.textAlign(p5?.LEFT, p5?.TOP);
-    p5?.text("Position Space", 0.25 * textHeight, 0.25 * textHeight);
-    p5?.text(
+    window?.p5?.noStroke();
+    window?.p5?.fill(235);
+    window?.p5?.textSize(textHeight);
+    window?.p5?.textAlign(window?.p5?.LEFT, window?.p5?.TOP);
+    window?.p5?.text("Position Space", 0.25 * textHeight, 0.25 * textHeight);
+    window?.p5?.text(
       "Momentum Space (x" + this.momentumZoom + ")",
       0.25 * textHeight,
       seperatorHeight + 0.25 * textHeight
     );
-    p5?.textAlign(p5?.RIGHT, p5?.TOP);
-    p5?.text(
+    window?.p5?.textAlign(window?.p5?.RIGHT, window?.p5?.TOP);
+    window?.p5?.text(
       "P(x<.5) = " + this.statistics.leftX.toFixed(3),
-      0.41 * p5?.width,
+      0.41 * window?.p5?.width,
       0.25 * textHeight
     );
-    p5?.text(
+    window?.p5?.text(
       "P(p<0) = " + this.statistics.leftP.toFixed(3),
-      0.41 * p5?.width,
+      0.41 * window?.p5?.width,
       seperatorHeight + 0.25 * textHeight
     );
-    p5?.textAlign(p5?.CENTER, p5?.TOP);
-    p5?.text(
+    window?.p5?.textAlign(window?.p5?.CENTER, window?.p5?.TOP);
+    window?.p5?.text(
       "<x> = " + this.statistics.meanX.toPrecision(3),
-      0.5 * p5?.width,
+      0.5 * window?.p5?.width,
       0.25 * textHeight
     );
-    p5?.text(
+    window?.p5?.text(
       "<p> = " + this.statistics.meanP.toPrecision(3),
-      0.5 * p5?.width,
+      0.5 * window?.p5?.width,
       seperatorHeight + 0.25 * textHeight
     );
-    p5?.textAlign(p5?.LEFT, p5?.TOP);
-    p5?.text(
+    window?.p5?.textAlign(window?.p5?.LEFT, window?.p5?.TOP);
+    window?.p5?.text(
       "RMS(x) = " + this.statistics.rmsX.toPrecision(3),
-      0.59 * p5?.width,
+      0.59 * window?.p5?.width,
       0.25 * textHeight
     );
-    p5?.text(
+    window?.p5?.text(
       "RMS(p) = " + this.statistics.rmsP.toPrecision(3),
-      0.59 * p5?.width,
+      0.59 * window?.p5?.width,
       seperatorHeight + 0.25 * textHeight
     );
-    p5?.textAlign(p5?.RIGHT, p5?.TOP);
-    p5?.text(
+    window?.p5?.textAlign(window?.p5?.RIGHT, window?.p5?.TOP);
+    window?.p5?.text(
       "t = " + this.statistics.time.toFixed(5),
-      p5?.width - 0.25 * textHeight,
+      window?.p5?.width - 0.25 * textHeight,
       0.25 * textHeight
     );
-    p5?.text(
+    window?.p5?.text(
       this.label,
-      p5?.width - 0.25 * textHeight,
+      window?.p5?.width - 0.25 * textHeight,
       seperatorHeight + 0.25 * textHeight
     );
   };
@@ -525,7 +530,7 @@ export function Schroedinger(settings, p5) {
   /*************************************************************************************************/
 
   this.simulationStep = function () {
-    console.log("--- ITERATION " + this.frameCount + " ---");
+    // console.log("--- ITERATION " + this.frameCount + " ---");
 
     this.propagate();
     this.updateMomenta();

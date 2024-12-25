@@ -76,7 +76,6 @@ let simulation_paused = true;
 let input_potential;
 
 export function setup(p5, canvasParentRef) {
-  console.log("-> Setup");
   if (p5 === undefined || canvasParentRef === undefined) {
     return;
   }
@@ -163,17 +162,31 @@ function resetSketch(p5) {
 
 function runPause() {
   simulation_paused = !simulation_paused;
+  // set interval to run the simulation
+  if (!simulation_paused) {
+    run_pause_button.html("Pause");
+  } else {
+    run_pause_button.html("Run");
+  }
+
+  const interval = setInterval(() => {
+    if (simulation_paused) {
+      clearInterval(interval);
+    }
+    draw();
+  }, 1000 / FRAME_RATE);
 }
 
 // Draw loop:
-// let curstep = 0;
+// eslint-disable-next-line no-unused-vars
+let curstep = 0;
 
-// function draw() {
-//   if (!simulation_paused) {
-//     quantumParticle.simulationStep();
-//     curstep += 1;
-//   }
-// }
+function draw() {
+  if (!simulation_paused) {
+    quantumParticle.simulationStep();
+    curstep += 1;
+  }
+}
 
 function potentialSelectEvent() {
   const val = radio_potential.value();
@@ -321,7 +334,7 @@ function downloadDataEvent(p5) {
     quantumParticle.dataFile + "Statictics.csv"
   );
   console.log(
-    "-> Statictics data saved as " + this.dataFile + "Statictics.csv"
+    "-> Statictics data saved as " + quantumParticle.dataFile + "Statictics.csv"
   );
   quantumParticle.saveAverageDensity();
 }
